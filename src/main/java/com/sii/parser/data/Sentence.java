@@ -7,7 +7,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.util.List;
 
 /**
- * Created by tremi on 8/11/2017.
+ * Created by Carlos David Mosquera on 8/11/2017.
+ * Sii Poland
  */
 @XStreamAlias("sentence")
 public class Sentence

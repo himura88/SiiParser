@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Created by tremi on 8/11/2017.
+ * Created by Carlos David Mosquera on 8/11/2017.
+ * Sii Poland
  */
 @Service
 public class SiiParserServiceImpl implements SiiParserService
@@ -145,14 +146,12 @@ public class SiiParserServiceImpl implements SiiParserService
     }
 
     @Override
-    public boolean textToXml(String inputFilePath) throws IOException
+    public boolean textToXml(String inputFilePath)
     {
 
 
-        try
+        try (Scanner sentenceScanner = new Scanner(new File(inputFilePath)))
         {
-
-            Scanner sentenceScanner = new Scanner(new File(inputFilePath));
             Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
             Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
             sentenceScanner.useDelimiter(sentenceDelimiterPattern);
