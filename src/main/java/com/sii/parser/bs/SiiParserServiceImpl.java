@@ -26,7 +26,47 @@ public class SiiParserServiceImpl implements SiiParserService
     @Override
     public boolean textToCsv(String inputFilePath)
     {
-        return false;
+        try
+        {
+
+            Scanner sentenceScanner = new Scanner(new File(inputFilePath));
+            Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
+            Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
+            sentenceScanner.useDelimiter(sentenceDelimiterPattern);
+            BufferedWriter csvWriter = new BufferedWriter(new FileWriter(inputFilePath + "output" + ".csv"));
+
+
+            while (sentenceScanner.hasNext())
+            {
+
+                String currentSentence = sentenceScanner.next();
+                Scanner wordScanner = new Scanner(currentSentence);
+                wordScanner.useDelimiter(wordDelimiterPattern);
+                List<String> currentSentenceWords = new ArrayList<>();
+                while (wordScanner.hasNext())
+                {
+                    currentSentenceWords.add(wordScanner.next());
+                }
+                Collections.sort(currentSentenceWords, String.CASE_INSENSITIVE_ORDER);
+                if (currentSentenceWords.isEmpty())
+                {
+                    continue;
+                }
+
+                Sentence currentOutputSentence = new Sentence();
+
+                currentOutputSentence.setWords(currentSentenceWords);
+
+
+            }
+
+            return true;
+
+        }
+        catch (IOException ex)
+        {
+            return false;
+        }
     }
 
     @Override
@@ -34,45 +74,52 @@ public class SiiParserServiceImpl implements SiiParserService
     {
 
 
-        Scanner sentenceScanner = new Scanner(new File(inputFilePath));
-        Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
-        Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
-        sentenceScanner.useDelimiter(sentenceDelimiterPattern);
-        BufferedWriter xmlWriter = new BufferedWriter(new FileWriter(inputFilePath + "output" + ".xml"));
-        XStream xstream = new XStream();
-        xstream.processAnnotations(Sentence.class);
-
-        while (sentenceScanner.hasNext())
+        try
         {
 
-            String currentSentence = sentenceScanner.next();
-            Scanner wordScanner = new Scanner(currentSentence);
-            wordScanner.useDelimiter(wordDelimiterPattern);
-            List<String> currentSentenceWords = new ArrayList<>();
-            while (wordScanner.hasNext())
+            Scanner sentenceScanner = new Scanner(new File(inputFilePath));
+            Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
+            Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
+            sentenceScanner.useDelimiter(sentenceDelimiterPattern);
+            BufferedWriter xmlWriter = new BufferedWriter(new FileWriter(inputFilePath + "output" + ".xml"));
+            XStream xstream = new XStream();
+            xstream.processAnnotations(Sentence.class);
+
+            while (sentenceScanner.hasNext())
             {
-                currentSentenceWords.add(wordScanner.next());
+
+                String currentSentence = sentenceScanner.next();
+                Scanner wordScanner = new Scanner(currentSentence);
+                wordScanner.useDelimiter(wordDelimiterPattern);
+                List<String> currentSentenceWords = new ArrayList<>();
+                while (wordScanner.hasNext())
+                {
+                    currentSentenceWords.add(wordScanner.next());
+                }
+                Collections.sort(currentSentenceWords, String.CASE_INSENSITIVE_ORDER);
+                if (currentSentenceWords.isEmpty())
+                {
+                    continue;
+                }
+
+                Sentence currentOutputSentence = new Sentence();
+
+                currentOutputSentence.setWords(currentSentenceWords);
+
+
+                xmlWriter.write(xstream.toXML(currentOutputSentence));
+
             }
-            Collections.sort(currentSentenceWords, String.CASE_INSENSITIVE_ORDER);
-            if (currentSentenceWords.isEmpty())
-            {
-                continue;
-            }
 
-            Sentence currentOutputSentence = new Sentence();
-
-            currentOutputSentence.setWords(currentSentenceWords);
-
-
-            xmlWriter.write(xstream.toXML(currentOutputSentence));
+            xmlWriter.close();
+            return true;
 
         }
+        catch (IOException ex)
+        {
+            return false;
+        }
 
-        xmlWriter.close();
-
-
-
-        return false;
     }
 
     public static void main(String args[])
