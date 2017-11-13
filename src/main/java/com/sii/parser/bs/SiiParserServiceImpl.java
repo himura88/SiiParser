@@ -23,6 +23,9 @@ public class SiiParserServiceImpl implements SiiParserService
     private static String CSV_DELIMITER =",";
     private static String SPACE =" ";
     private static String LINE_BREAK ="\n";
+    private static String XML_DOCUMENT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
+    private static String XML_TEXT_TAG_OPEN = "<text>";
+    private static String XML_TEXT_TAG_CLOSE = "</text>";
 
 
 
@@ -96,6 +99,10 @@ public class SiiParserServiceImpl implements SiiParserService
             Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
             sentenceScanner.useDelimiter(sentenceDelimiterPattern);
             BufferedWriter xmlWriter = new BufferedWriter(new FileWriter(inputFilePath + "output" + ".xml"));
+            xmlWriter.write(XML_DOCUMENT_HEADER);
+            xmlWriter.newLine();
+            xmlWriter.write(XML_TEXT_TAG_OPEN);
+            xmlWriter.newLine();
             XStream xstream = new XStream();
             xstream.processAnnotations(Sentence.class);
 
@@ -124,7 +131,8 @@ public class SiiParserServiceImpl implements SiiParserService
                 xmlWriter.write(xstream.toXML(currentOutputSentence));
 
             }
-
+            xmlWriter.newLine();
+            xmlWriter.write(XML_TEXT_TAG_CLOSE);
             xmlWriter.close();
             return true;
 
