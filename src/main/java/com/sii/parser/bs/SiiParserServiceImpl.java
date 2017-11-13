@@ -31,18 +31,79 @@ public class SiiParserServiceImpl implements SiiParserService
     @Override
     public boolean textToCsv(String inputFilePath)
     {
+        int sentenceMaxWordCountForCsvHeader = 0;
+
+
+        /*
+         * This first try/catch block is used to traverse the inputFile looking for the sentence which has the greater
+         * number of words. The only way to accomplish this is by looking the whole file and counting the words
+         * in each sentence.
+         */
+        try (Scanner sentenceScanner = new Scanner(new File(inputFilePath)))
+        {
+            Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
+            Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
+            sentenceScanner.useDelimiter(sentenceDelimiterPattern);
+
+            while (sentenceScanner.hasNext())
+            {
+
+                String currentSentence = sentenceScanner.next();
+                Scanner wordScanner = new Scanner(currentSentence);
+                wordScanner.useDelimiter(wordDelimiterPattern);
+                List<String> currentSentenceWords = new ArrayList<>();
+                while (wordScanner.hasNext())
+                {
+                    currentSentenceWords.add(wordScanner.next());
+                }
+
+                if (currentSentenceWords.isEmpty())
+                {
+                    continue;
+                }
+
+                int currentSentenceWordCount = currentSentenceWords.size();
+                if (currentSentenceWordCount > sentenceMaxWordCountForCsvHeader)
+                {
+                    sentenceMaxWordCountForCsvHeader = currentSentenceWordCount;
+                }
+
+            }
+
+        }
+
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+
+
+        /*
+         * This block takes care of actual CSV generation. It will traverse the input file, extract the sentences
+         * generate the proper format and write the CSV output file.
+         */
         try (Scanner sentenceScanner = new Scanner(new File(inputFilePath)))
         {
 
-            //Scanner sentenceScanner = new Scanner(new File(inputFilePath));
             Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
             Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
             sentenceScanner.useDelimiter(sentenceDelimiterPattern);
             String fullyQualifiedOutputFileName = inputFilePath + "output" + ".csv";
             BufferedWriter csvWriter = new BufferedWriter(new FileWriter(fullyQualifiedOutputFileName));
-            csvWriter.newLine();
-            int csvWordsCount = 0;
             int sentenceCount = 0;
+
+            List<String> wordCountList = new ArrayList<>();
+            for (int i = 1; i <= sentenceMaxWordCountForCsvHeader; i++)
+            {
+                wordCountList.add("Word" + SPACE + String.valueOf(i));
+
+            }
+
+            String csvHeader = CSV_DELIMITER + wordCountList.stream().collect(Collectors.joining(CSV_DELIMITER));
+            csvWriter.write(csvHeader);
+            csvWriter.newLine();
 
 
             while (sentenceScanner.hasNext())
@@ -65,24 +126,12 @@ public class SiiParserServiceImpl implements SiiParserService
                 }
                 ++sentenceCount;
 
-                int currentSentenceWordCount = currentSentenceWords.size();
-                if (currentSentenceWordCount > csvWordsCount)
-                {
-                    csvWordsCount = currentSentenceWordCount;
-                }
                 String csvCurrentSentence = "Sentence" + SPACE + sentenceCount + CSV_DELIMITER + currentSentenceWords.stream().collect(Collectors.joining(CSV_DELIMITER)) + LINE_BREAK;
                 csvWriter.write(csvCurrentSentence);
             }
 
-            List<String> wordCountList = new ArrayList<>();
-            for (int i = 1; i <= csvWordsCount; i++)
-            {
-                wordCountList.add("Word" + SPACE + String.valueOf(i));
-
-            }
-
             csvWriter.close();
-            String csvHeader = CSV_DELIMITER + wordCountList.stream().collect(Collectors.joining(CSV_DELIMITER));
+
 
             return true;
 
@@ -171,23 +220,5 @@ public class SiiParserServiceImpl implements SiiParserService
         }
     }
 
-    public static void main(String args[])
-    {
-        SiiParserServiceImpl siiParserService = new SiiParserServiceImpl();
 
-        try
-        {
-            siiParserService.textToXml("D:\\Downloads\\sample-files\\small.in");
-            siiParserService.textToCsv("D:\\Downloads\\sample-files\\small.in");
-        }
-
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
 }
