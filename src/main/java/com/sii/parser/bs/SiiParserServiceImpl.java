@@ -20,26 +20,27 @@ public class SiiParserServiceImpl implements SiiParserService
 {
     private static String PUNCTUATION_MATCHER = "[.!?)$]";
     private static String WORD_MATCHER = "[^\\p{L}\\p{IsDigit}']+";
-    private static String CSV_DELIMITER =",";
-    private static String SPACE =" ";
-    private static String LINE_BREAK ="\n";
+    private static String CSV_DELIMITER = ",";
+    private static String SPACE = " ";
+    private static String LINE_BREAK = "\n";
     private static String XML_DOCUMENT_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
     private static String XML_TEXT_TAG_OPEN = "<text>";
     private static String XML_TEXT_TAG_CLOSE = "</text>";
 
 
-
     @Override
     public boolean textToCsv(String inputFilePath)
     {
-        try
+        try (Scanner sentenceScanner = new Scanner(new File(inputFilePath)))
         {
 
-            Scanner sentenceScanner = new Scanner(new File(inputFilePath));
+            //Scanner sentenceScanner = new Scanner(new File(inputFilePath));
             Pattern sentenceDelimiterPattern = Pattern.compile(PUNCTUATION_MATCHER);
             Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
             sentenceScanner.useDelimiter(sentenceDelimiterPattern);
-            BufferedWriter csvWriter = new BufferedWriter(new FileWriter(inputFilePath + "output" + ".csv"));
+            String fullyQualifiedOutputFileName = inputFilePath + "output" + ".csv";
+            BufferedWriter csvWriter = new BufferedWriter(new FileWriter(fullyQualifiedOutputFileName));
+            csvWriter.newLine();
             int csvWordsCount = 0;
             int sentenceCount = 0;
 
@@ -69,21 +70,29 @@ public class SiiParserServiceImpl implements SiiParserService
                 {
                     csvWordsCount = currentSentenceWordCount;
                 }
-                String csvCurrentSentence = "Sentence" + SPACE + sentenceCount + CSV_DELIMITER +  currentSentenceWords.stream().collect(Collectors.joining(CSV_DELIMITER)) + LINE_BREAK;
+                String csvCurrentSentence = "Sentence" + SPACE + sentenceCount + CSV_DELIMITER + currentSentenceWords.stream().collect(Collectors.joining(CSV_DELIMITER)) + LINE_BREAK;
                 csvWriter.write(csvCurrentSentence);
+            }
 
-                System.out.println(csvCurrentSentence);
+            List<String> wordCountList = new ArrayList<>();
+            for (int i = 1; i <= csvWordsCount; i++)
+            {
+                wordCountList.add("Word" + SPACE + String.valueOf(i));
 
             }
 
             csvWriter.close();
+            String csvHeader = CSV_DELIMITER + wordCountList.stream().collect(Collectors.joining(CSV_DELIMITER));
+
             return true;
 
         }
         catch (IOException ex)
         {
+            System.out.println("FAILING TO FINISH CSV FILE GENERATION");
             return false;
         }
+
     }
 
     @Override
@@ -145,6 +154,22 @@ public class SiiParserServiceImpl implements SiiParserService
     }
 
 
+    private boolean fileStringInserter(String fullyQualifiedFileName, String stringToInsert, int index)
+    {
+        try
+        {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(new File(fullyQualifiedFileName), "rw");
+            randomAccessFile.seek(index); // index in which we want to insert the "stringToInsert"
+            randomAccessFile.write(stringToInsert.getBytes());
+            randomAccessFile.close();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
 
     public static void main(String args[])
     {
