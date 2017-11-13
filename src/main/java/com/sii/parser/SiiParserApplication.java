@@ -31,8 +31,15 @@ public class SiiParserApplication implements CommandLineRunner
     public void run(String... args) throws Exception
     {
 
-        String fullyQualifiedFileName = args[0];
-        siiParserService.textToXml(fullyQualifiedFileName);
-        siiParserService.textToCsv(fullyQualifiedFileName);
+        if (args.length >= 1)
+        {
+
+            String fullyQualifiedFileName = args[0];
+            siiParserService.textToXml(fullyQualifiedFileName);
+            siiParserService.textToCsv(fullyQualifiedFileName);
+        }
+
+
+
     }
 }

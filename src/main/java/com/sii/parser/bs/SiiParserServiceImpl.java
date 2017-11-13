@@ -202,22 +202,4 @@ public class SiiParserServiceImpl implements SiiParserService
     }
 
 
-    private boolean fileStringInserter(String fullyQualifiedFileName, String stringToInsert, int index)
-    {
-        try
-        {
-            RandomAccessFile randomAccessFile = new RandomAccessFile(new File(fullyQualifiedFileName), "rw");
-            randomAccessFile.seek(index); // index in which we want to insert the "stringToInsert"
-            randomAccessFile.write(stringToInsert.getBytes());
-            randomAccessFile.close();
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-
 }
