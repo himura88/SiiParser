@@ -1,7 +1,6 @@
 package com.sii.parser.data;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 
 import java.util.List;
 
@@ -10,8 +9,7 @@ import java.util.List;
  */
 public class Text
 {
-    @JacksonXmlProperty(localName = "sentence")
-    @JacksonXmlElementWrapper(useWrapping = false)
+
     private List<Sentence> sentences;
 
     public List<Sentence> getSentences()

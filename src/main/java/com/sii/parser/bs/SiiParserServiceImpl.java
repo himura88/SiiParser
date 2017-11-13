@@ -1,18 +1,16 @@
 package com.sii.parser.bs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.sii.parser.data.Sentence;
-import com.sii.parser.data.Text;
 import com.thoughtworks.xstream.XStream;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by tremi on 8/11/2017.
@@ -22,6 +20,11 @@ public class SiiParserServiceImpl implements SiiParserService
 {
     private static String PUNCTUATION_MATCHER = "[.!?)$]";
     private static String WORD_MATCHER = "[^\\p{L}\\p{IsDigit}']+";
+    private static String CSV_DELIMITER =",";
+    private static String SPACE =" ";
+    private static String LINE_BREAK ="\n";
+
+
 
     @Override
     public boolean textToCsv(String inputFilePath)
@@ -34,6 +37,8 @@ public class SiiParserServiceImpl implements SiiParserService
             Pattern wordDelimiterPattern = Pattern.compile(WORD_MATCHER);
             sentenceScanner.useDelimiter(sentenceDelimiterPattern);
             BufferedWriter csvWriter = new BufferedWriter(new FileWriter(inputFilePath + "output" + ".csv"));
+            int csvWordsCount = 0;
+            int sentenceCount = 0;
 
 
             while (sentenceScanner.hasNext())
@@ -47,19 +52,28 @@ public class SiiParserServiceImpl implements SiiParserService
                 {
                     currentSentenceWords.add(wordScanner.next());
                 }
+
                 Collections.sort(currentSentenceWords, String.CASE_INSENSITIVE_ORDER);
+
                 if (currentSentenceWords.isEmpty())
                 {
                     continue;
                 }
+                ++sentenceCount;
 
-                Sentence currentOutputSentence = new Sentence();
+                int currentSentenceWordCount = currentSentenceWords.size();
+                if (currentSentenceWordCount > csvWordsCount)
+                {
+                    csvWordsCount = currentSentenceWordCount;
+                }
+                String csvCurrentSentence = "Sentence" + SPACE + sentenceCount + CSV_DELIMITER +  currentSentenceWords.stream().collect(Collectors.joining(CSV_DELIMITER)) + LINE_BREAK;
+                csvWriter.write(csvCurrentSentence);
 
-                currentOutputSentence.setWords(currentSentenceWords);
-
+                System.out.println(csvCurrentSentence);
 
             }
 
+            csvWriter.close();
             return true;
 
         }
@@ -122,6 +136,8 @@ public class SiiParserServiceImpl implements SiiParserService
 
     }
 
+
+
     public static void main(String args[])
     {
         SiiParserServiceImpl siiParserService = new SiiParserServiceImpl();
@@ -129,11 +145,9 @@ public class SiiParserServiceImpl implements SiiParserService
         try
         {
             siiParserService.textToXml("D:\\Downloads\\sample-files\\small.in");
+            siiParserService.textToCsv("D:\\Downloads\\sample-files\\small.in");
         }
-        catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
+
         catch (FileNotFoundException e)
         {
             e.printStackTrace();

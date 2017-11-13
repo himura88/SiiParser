@@ -36,19 +36,26 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Jackson XML SERIALIZER/DESERIALIZER -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.7.4</version>
-		</dependency>
+		<!-- Xstream XML Utils -->
 
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
 			<version>1.4.9</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+    </dependencies>
+
+	<!-- Apache Commons -->
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>2.7-SNAPSHOT</version>
+	</dependency>
 
 	<build>
 		<plugins>
