@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>SiiParser</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Spring boot project for Sii Recruitment Process</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -45,20 +45,6 @@
 		</dependency>
 
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-            <version>2.7.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode.zohhak</groupId>
-            <artifactId>zohhak</artifactId>
-            <version>1.1.1</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
             <version>2.2.1</version>
@@ -83,7 +69,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
 		</plugins>
 	</build>
 
