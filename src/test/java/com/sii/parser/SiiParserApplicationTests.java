@@ -51,7 +51,7 @@ public class SiiParserApplicationTests
         String inputTestFile = classLoader.getResource("small.in").getPath();
         siiParserService.textToCsv(inputTestFile);
         String testResultFile = classLoader.getResource("small.inoutput.csv").getPath();
-        String controlTestFile = classLoader.getResource("smallCsvTest.csv").getPath();
+        String controlTestFile = classLoader.getResource("smallCsvOutputTestResult.csv").getPath();
 
         File csvGeneratedFile = new File(testResultFile);
         File csvControlTestFile = new File(controlTestFile);
